@@ -1,6 +1,4 @@
-var $window = $('.window').window();
-var $terminal = $('.terminal').terminal({
-    container : $window.find('.window-content'),
+var $terminal = $('.terminal-window').window().window('content').terminal({
     prog :[
         {
             command : "custom",
@@ -10,6 +8,41 @@ var $terminal = $('.terminal').terminal({
                 
             }
         },
+        {
+            command : "in",
+            help : "in",
+            program : function(prompt,args){
+                prompt.out("Type something");
+                prompt.in(function(input){
+                    prompt.out(input);
+                    prompt.exit();
+                });
+                
+                
+            }
+        },
+        {
+            command : "whoami",
+            help : "whoami",
+            program : function(prompt,args){
+                prompt.out('Please enter your name');
+                prompt.in(function(input){
+                    prompt.out('Your name is ' + input);
+                    prompt.exit();
+                });
+                
+                
+            }
+        },
+        {
+            command : "exec",
+            help : "exec",
+            program : function(prompt,args){
+                prompt.exec('echo','plop');
+                
+                
+            }
+        }
          
     ]
 });

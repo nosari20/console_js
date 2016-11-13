@@ -4,6 +4,7 @@
 $background-color: #232323;
 $command-color: #32c146;
 $error-color: #D24D57;
+$comment-color: gray;
 $default-color: #FFF;
 .terminal{
     min-height: 100%;
@@ -34,7 +35,7 @@ $default-color: #FFF;
     }
         
     .comment{
-        opacity: .5;
+        color :  $comment-color;
     }
     
 

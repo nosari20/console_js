@@ -8,9 +8,35 @@
            
         }, options);
 
+        plugin.methods = {
+            content : function(){
+                return $el.find('.window-content').first();
+            },
+            open : function(){
+                return plugin.open();
+            },
+            close : function(){
+                return plugin.close();
+            }
+        }
+
         
-        plugin.init = function() {
-           plugin.initEventHandlers();            
+        plugin.init = function() {           
+           var $window = $(
+                            '<header class="window-header">'+
+                                '<nav class="window-controls">'+
+                                '<span class="control-item control-minimize js-minimize">‒</span>'+
+                                '<span class="control-item control-maximize js-maximize">□</span>'+
+                                '<span class="control-item control-close js-close">˟</span>'+
+                            '</nav>'+
+                            '</header>'+
+                            '<main class="window-content">'+                                
+                            '</main>'
+                        );
+            $el.append($window);
+            $el.addClass('window');
+            plugin.initEventHandlers();
+            
         }
         plugin.initEventHandlers = function(){
             $el.find(".js-minimize").click(plugin.minimize);
@@ -67,25 +93,49 @@
             $el.removeClass("window--resizing");
         }
 
-        plugin.init();
+        if(options == false){
+            return {
+                methods:  plugin.methods
+            }
+        }else{
+            plugin.init();
+        }
+        
     };
 
 
 
     $.fn.window = function(options) {
-        return this.each(function() {   
-            var upgraded =  $(this).attr('upgraded');
-            var pluginName = 'window';
-            if (upgraded != undefined) {   
-                if(upgraded.indexOf(pluginName + ',') == -1){
+        var pluginName = 'window';
+        if(typeof options == 'object' | typeof options == 'undefined'){
+            return this.each(function() {   
+                var upgraded =  $(this).attr('upgraded');
+                
+                if (upgraded != undefined) {   
+                    if(upgraded.indexOf(pluginName + ',') == -1){
+                        var plugin = new $.window(this, options);
+                        $(this).attr('upgraded', upgraded + pluginName+',');
+                    } 
+                }else{
                     var plugin = new $.window(this, options);
-                    $(this).attr('upgraded', upgraded + pluginName+',');
-                } 
+                    $(this).attr('upgraded', pluginName+',');
+                }
+            });
+        }else if(typeof options == 'string'){
+            if($(this).attr('upgraded') == undefined){
+                console.error('Plugin not initialized');
             }else{
-                var plugin = new $.window(this, options);
-                $(this).attr('upgraded', pluginName+',');
+                var method = $.window(this.first(), false).methods[options];
+                if(!method){
+                    console.error('Unknown method');
+                    return;
+                }
+                return method.call();
             }
-        });
+            
+        }
+
+        console.error('Bad parameters');
 
     } 
 }( jQuery ));

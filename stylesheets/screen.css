@@ -181,7 +181,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background: none;
 }
 
-/* line 8, ../sass/components/_terminal.scss */
+/* line 9, ../sass/components/_terminal.scss */
 .terminal {
   min-height: 100%;
   background: #232323;
@@ -192,34 +192,34 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-size: 14px;
   line-height: 1.5;
 }
-/* line 17, ../sass/components/_terminal.scss */
+/* line 18, ../sass/components/_terminal.scss */
 .terminal .prompt {
   color: transparent;
   text-shadow: 0 0 0 #FFF;
 }
-/* line 20, ../sass/components/_terminal.scss */
+/* line 21, ../sass/components/_terminal.scss */
 .terminal .prompt.error {
   text-shadow: 0 0 0 #D24D57;
 }
-/* line 23, ../sass/components/_terminal.scss */
+/* line 24, ../sass/components/_terminal.scss */
 .terminal .prompt pre {
   margin: 0;
 }
-/* line 26, ../sass/components/_terminal.scss */
+/* line 27, ../sass/components/_terminal.scss */
 .terminal .prompt .pulse {
   -moz-animation: pulse 1s ease-in-out infinite;
   -webkit-animation: pulse 1s ease-in-out infinite;
   animation: pulse 1s ease-in-out infinite;
   text-shadow: 0 0 0 #32c146;
 }
-/* line 30, ../sass/components/_terminal.scss */
+/* line 31, ../sass/components/_terminal.scss */
 .terminal .prompt .command {
   text-shadow: 0 0 0 #32c146;
   outline: none;
 }
-/* line 36, ../sass/components/_terminal.scss */
+/* line 37, ../sass/components/_terminal.scss */
 .terminal .comment {
-  opacity: .5;
+  color: gray;
 }
 
 @-moz-keyframes pulse {

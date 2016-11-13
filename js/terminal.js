@@ -7,6 +7,8 @@
             commands : [],
             index : -1
         }
+
+        
    
         /*
          * default command
@@ -21,6 +23,13 @@
                            text += (args[w] + " ");
                        }
                        prompt.out(text);
+                   }
+                },
+                {
+                   command : "whoareyou",
+                   help : "whoareyou",
+                   program : function(prompt,args){
+                       prompt.out("Florent NOSARI");
                    }
                 },
                 {
@@ -66,25 +75,39 @@
         
         plugin.init = function() {
              plugin.initPrompt();
+             plugin.autoexit = true;
         }
         /*
          * Prompt
          */
         plugin.initPrompt = function(){
-            plugin.prompt = $('<div class="prompt prompt"><pre>$ <span contenteditable="true" class="command"></span><span class="pulse">_</span></pre></div>') ;
-            $el.append(plugin.prompt);
-            $el.click(function(){
+            plugin.terminal = $(
+                                '<div class="terminal">'+
+                                    '<div class="comment"><pre># use \'help\' to see available command</pre></div>'+
+                                '</div>'
+                            ),
+            $el.append(plugin.terminal);
+            plugin.prompt = $('<div class="prompt prompt"><pre><span class="dollar">$ </span><span contenteditable="true" class="command"></span><span class="pulse">_</span></pre></div>') ;
+            plugin.terminal.append(plugin.prompt);
+            plugin.terminal.click(function(){
                 plugin.focusPrompt();
             })
+            plugin.initPromptHandlers();
+            
 
-            plugin.prompt.find('.command').keypress(plugin.promptKeyPress);
-            plugin.prompt.find('.command').keydown(plugin.promptKeyDown);
-
+        }
+        plugin.initPromptHandlers = function(){
+            plugin.getPromptInput().keypress(plugin.promptKeyPress);
+            plugin.getPromptInput().keydown(plugin.promptKeyDown);
+        }
+        plugin.deinitPromptHandlers = function(){
+            plugin.getPromptInput().off('keypress',plugin.promptKeyPress);
+            plugin.getPromptInput().off('keydown',plugin.promptKeyDown);
         }
         plugin.promptKeyPress = function(e){
             if (e.keyCode == 13) {
                 e.preventDefault();                
-                plugin.launch(plugin.prompt.find('.command').text());
+                plugin.launch(plugin.getPromptInput().text());
 
             }
         }
@@ -107,30 +130,45 @@
             }
         }
         plugin.focusPrompt = function(){
-            plugin.prompt.find('.command').focus();
-            var textNode =  plugin.prompt.find('.command')[0].firstChild;
-            var caret = textNode.length;
-            var range = document.createRange();
-            range.setStart(textNode, caret);
-            range.setEnd(textNode, caret);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
+            plugin.getPromptInput().focus();
+            var textNode =  plugin.getPromptInput()[0].firstChild;
+            if(textNode != undefined){
+                var caret = textNode.length;
+                var range = document.createRange();
+                range.setStart(textNode, caret);
+                range.setEnd(textNode, caret);
+                var sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
             
             
         }
-        plugin.showPrompt = function(){
+        plugin.getPromptInput = function(){
+            return plugin.prompt.find('.command');
+        }
+        plugin.showPrompt = function(isCommand){
             plugin.emptyPrompt();
             plugin.prompt.show();
+            if(isCommand == undefined){
+                plugin.prompt.find('.dollar').show();
+            }else{
+                plugin.prompt.find('.dollar').hide();
+            }
         }
         plugin.emptyPrompt = function(){
-            plugin.prompt.find('.command').empty();
+            plugin.getPromptInput().empty();
         }
         plugin.hidePrompt = function(){
             plugin.prompt.hide();
         }
         plugin.setPrompt = function(text){
-            plugin.prompt.find('.command').text(text);
+            plugin.getPromptInput().text(text);
+        }
+        plugin.promptBottom = function(){
+            setTimeout( function() {
+                $($el).scrollTop($el[0].scrollHeight);
+            }, 1 );
         }
         /*
          * Creation of line
@@ -142,7 +180,7 @@
             return $('<div class="prompt"><pre>'+content+'</pre></div>');
         }
         plugin.createCommandLine = function(command){
-            return $('<div class="prompt"><pre>$ <span class="command">'+command+'</span></pre></div>');
+            return $('<div class="prompt"><pre><span class="dollar">$ </span><span class="command">'+command+'</span></pre></div>');
         }
         plugin.createErrorLine = function(content){
             return $('<div class="prompt error"><pre>'+content+'</pre></div>');
@@ -153,9 +191,45 @@
          */
         plugin.out = function(text, color){
            plugin.createLine(text, color).insertBefore(plugin.prompt);
+           plugin.promptBottom();
         }
          plugin.err = function(text){
            plugin.createErrorLine(text).insertBefore(plugin.prompt);
+           plugin.promptBottom();
+        }
+        plugin.in = function(callback){
+           plugin.showPrompt(false);
+           plugin.deinitPromptHandlers();
+           var enter = function(e){
+               if (e.keyCode == 13) {
+                   e.preventDefault();
+                    plugin.getPromptInput().off('keypress',enter);
+                    plugin.out(plugin.getPromptInput().text(), 'gray');
+                    callback(plugin.getPromptInput().text());  
+                    plugin.promptBottom();                 
+
+               }
+           }
+           plugin.getPromptInput().keypress(enter);
+           plugin.wait();
+        }
+
+        plugin.exec = function(command, args){
+            var parameters = args.split(" ");
+
+            var prog = plugin.eval(command);
+            if(prog){
+                plugin.execute(prog.program,parameters); 
+            }   
+        }
+        
+        plugin.exit = function(){
+             plugin.showPrompt();
+             plugin.initPromptHandlers();
+             plugin.autoexit = true;
+        }
+        plugin.wait = function(){
+            plugin.autoexit = false;
         }
 
 
@@ -178,21 +252,25 @@
                 plugin.execute(prog.program,parameters); 
             }else{
                 plugin.showPrompt();
+                plugin.deinitPromptHandlers();
+                plugin.initPromptHandlers();
             }                         
             
         }
 
         plugin.execute = function(program,parameters){
             program(plugin, parameters);
-            plugin.showPrompt();
-            if(plugin.options.container){
-                setTimeout( function() {
-                    $(plugin.options.container).scrollTop($(plugin.options.container)[0].scrollHeight);
-                }, 1 );
-                
+            if(plugin.autoexit){
+               plugin.exit();
             }
+
+            plugin.promptBottom();
+            
+                
+            
             
         }
+
 
         plugin.eval =  function(command){
             var prog = plugin.options.prog.find(prog => {
