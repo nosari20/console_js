@@ -22,24 +22,10 @@ var $terminal = $('.terminal-window').window().window('content').terminal({
             }
         },
         {
-            command : "whoami",
-            help : "whoami",
-            program : function(prompt,args){
-                prompt.out('Please enter your name');
-                prompt.in(function(input){
-                    prompt.out('Your name is ' + input);
-                    prompt.exit();
-                });
-                
-                
-            }
-        },
-        {
             command : "exec",
             help : "exec",
             program : function(prompt,args){
-                prompt.exec('echo','plop');
-                
+                prompt.exec('echo','plop');                
                 
             }
         }

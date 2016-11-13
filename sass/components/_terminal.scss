@@ -1,6 +1,8 @@
 @import "compass/css3/animation";
 @import "compass/css3/transition";
 
+
+
 $background-color: #232323;
 $command-color: #32c146;
 $error-color: #D24D57;
@@ -15,6 +17,14 @@ $default-color: #FFF;
     font-weight: 300;
     font-size: 14px;
     line-height: 1.5;
+    & *::selection {
+        background: $default-color; /* WebKit/Blink Browsers */
+         text-shadow: 0 0 0 $background-color;
+    }
+    & *::-moz-selection {
+        background: $default-color; /* Gecko Browsers */
+        text-shadow: 0 0 0 $background-color;
+    }
     .prompt{
         color: transparent; //hide the caret
         text-shadow: 0 0 0 $default-color;
@@ -35,7 +45,8 @@ $default-color: #FFF;
     }
         
     .comment{
-        color :  $comment-color;
+        color :  transparent;
+        text-shadow: 0 0 0 $comment-color;
     }
     
 

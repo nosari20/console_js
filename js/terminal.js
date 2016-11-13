@@ -1,15 +1,11 @@
-(function ( $ ) {
- 
+(function ( $ ) { 
     $.terminal = function(el,options) {
         var plugin = this;
         var $el = $(el);
         var history = {
             commands : [],
             index : -1
-        }
-
-        
-   
+        } 
         /*
          * default command
          */
@@ -26,8 +22,8 @@
                    }
                 },
                 {
-                   command : "whoareyou",
-                   help : "whoareyou",
+                   command : "whoami",
+                   help : "whoami",
                    program : function(prompt,args){
                        prompt.out("Florent NOSARI");
                    }
@@ -58,8 +54,49 @@
                        
                    }
                 }
-
         ];
+        plugin.function = {
+                    out : function(text, color){
+                        plugin.createLine(text, color).insertBefore(plugin.prompt);
+                        plugin.promptBottom();
+                    },
+                    err : function(text){
+                        plugin.createErrorLine(text).insertBefore(plugin.prompt);
+                        plugin.promptBottom();
+                    },
+                    in : function(callback){
+                        plugin.showPrompt(false);
+                        plugin.deinitPromptHandlers();
+                        var enter = function(e){
+                            if (e.keyCode == 13) {
+                                e.preventDefault();
+                                    plugin.getPromptInput().off('keypress',enter);
+                                    plugin.function.out(plugin.getPromptInput().text(), 'gray');
+                                    callback(plugin.getPromptInput().text());  
+                                    plugin.promptBottom();
+                            }
+                        }
+                        plugin.getPromptInput().keypress(enter);
+                        plugin.function.wait();
+                    },
+                    exec : function(command, args){
+                        var parameters = args.split(" ");
+                        var prog = plugin.eval(command);
+                        if(prog){
+                            plugin.execute(prog.program,parameters); 
+                        }   
+                    },                    
+                    exit : function(){
+                        plugin.showPrompt();
+                        plugin.initPromptHandlers();
+                        plugin.autoexit = true;
+                        plugin.focusPrompt();
+                    },
+                    wait : function(){
+                        plugin.autoexit = false;
+                        plugin.getPromptInput().keydown(plugin.promptCTRL_C);
+                    }
+        }
 
         /*
          * Merge options commands and defaults and delete it from optons after
@@ -70,9 +107,7 @@
         }      
         plugin.options = $.extend({
            prog : prog
-        }, options);
-
-        
+        }, options);        
         plugin.init = function() {
              plugin.initPrompt();
              plugin.autoexit = true;
@@ -87,22 +122,42 @@
                                 '</div>'
                             ),
             $el.append(plugin.terminal);
-            plugin.prompt = $('<div class="prompt prompt"><pre><span class="dollar">$ </span><span contenteditable="true" class="command"></span><span class="pulse">_</span></pre></div>') ;
+            plugin.prompt = plugin.createPrompt();
             plugin.terminal.append(plugin.prompt);
             plugin.terminal.click(function(){
                 plugin.focusPrompt();
             })
             plugin.initPromptHandlers();
-            
-
+        }
+        plugin.createPrompt = function(){
+            return $('<div class="prompt input"><pre><span class="dollar">$ </span><span contenteditable="true" class="command"></span><span class="pulse">_</span></pre></div>') ;
         }
         plugin.initPromptHandlers = function(){
+            var newPrompt = plugin.createPrompt();
+            plugin.prompt.replaceWith(newPrompt);
+            plugin.prompt = newPrompt;
             plugin.getPromptInput().keypress(plugin.promptKeyPress);
             plugin.getPromptInput().keydown(plugin.promptKeyDown);
+            plugin.getPromptInput().keydown(plugin.promptCTRL_L);
         }
         plugin.deinitPromptHandlers = function(){
             plugin.getPromptInput().off('keypress',plugin.promptKeyPress);
             plugin.getPromptInput().off('keydown',plugin.promptKeyDown);
+            plugin.getPromptInput().off('keydown',plugin.promptCTRL_L);
+        }
+        plugin.promptCTRL_C = function(e){
+            if (e.keyCode == 67 && e.ctrlKey) {
+                plugin.function.exit();
+            }
+        }
+        plugin.promptCTRL_L = function(e){
+            if (e.keyCode == 76 && e.ctrlKey) {
+                e.preventDefault();
+                if(plugin.autoexit){
+                    $el.find('.prompt').not('.input').remove();
+                    plugin.focusPrompt();
+                }
+            }
         }
         plugin.promptKeyPress = function(e){
             if (e.keyCode == 13) {
@@ -141,8 +196,6 @@
                 sel.removeAllRanges();
                 sel.addRange(range);
             }
-            
-            
         }
         plugin.getPromptInput = function(){
             return plugin.prompt.find('.command');
@@ -185,54 +238,6 @@
         plugin.createErrorLine = function(content){
             return $('<div class="prompt error"><pre>'+content+'</pre></div>');
         }
-
-        /*
-         * Basic function of program
-         */
-        plugin.out = function(text, color){
-           plugin.createLine(text, color).insertBefore(plugin.prompt);
-           plugin.promptBottom();
-        }
-         plugin.err = function(text){
-           plugin.createErrorLine(text).insertBefore(plugin.prompt);
-           plugin.promptBottom();
-        }
-        plugin.in = function(callback){
-           plugin.showPrompt(false);
-           plugin.deinitPromptHandlers();
-           var enter = function(e){
-               if (e.keyCode == 13) {
-                   e.preventDefault();
-                    plugin.getPromptInput().off('keypress',enter);
-                    plugin.out(plugin.getPromptInput().text(), 'gray');
-                    callback(plugin.getPromptInput().text());  
-                    plugin.promptBottom();                 
-
-               }
-           }
-           plugin.getPromptInput().keypress(enter);
-           plugin.wait();
-        }
-
-        plugin.exec = function(command, args){
-            var parameters = args.split(" ");
-
-            var prog = plugin.eval(command);
-            if(prog){
-                plugin.execute(prog.program,parameters); 
-            }   
-        }
-        
-        plugin.exit = function(){
-             plugin.showPrompt();
-             plugin.initPromptHandlers();
-             plugin.autoexit = true;
-        }
-        plugin.wait = function(){
-            plugin.autoexit = false;
-        }
-
-
         /*
          * Execution
          */
@@ -243,10 +248,7 @@
             var tab = text.split(" ");
             var command = tab.shift();
             var parameters = tab;
-
-
             plugin.createCommandLine(text).insertBefore(plugin.prompt);
-
             var prog = plugin.eval(command);
             if(prog){
                 plugin.execute(prog.program,parameters); 
@@ -254,44 +256,31 @@
                 plugin.showPrompt();
                 plugin.deinitPromptHandlers();
                 plugin.initPromptHandlers();
-            }                         
-            
+                plugin.focusPrompt();
+            }
         }
-
         plugin.execute = function(program,parameters){
-            program(plugin, parameters);
+            plugin.getPromptInput().keydown(plugin.promptCTRL_C);
+            program(plugin.function, parameters);
             if(plugin.autoexit){
-               plugin.exit();
+               plugin.function.exit();
             }
 
-            plugin.promptBottom();
-            
-                
-            
-            
+            plugin.promptBottom(); 
         }
-
-
         plugin.eval =  function(command){
             var prog = plugin.options.prog.find(prog => {
                 return prog.command == command;
             })
-
             if(prog != undefined){
                 return prog;
             }else{
-                plugin.err("Command &lt;" + command + "&gt; not found");
+                plugin.function.err("Command &lt;" + command + "&gt; not found");
                 return false;
             }
-
         }
-
-
         plugin.init();
     };
-
-
-
     $.fn.terminal = function(options) {
         return this.each(function() {    
             if ($(this).attr('upgraded') == undefined) {              
@@ -299,6 +288,5 @@
                 $(this).attr('upgraded', 'true');
             }
         });
-
     } 
 }( jQuery ));

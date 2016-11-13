@@ -67,7 +67,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   display: block;
 }
 
-/* line 3, ../sass/components/_window.scss */
+/* line 20, ../sass/components/_window.scss */
 .window {
   position: absolute;
   left: calc(50vw - 225px);
@@ -83,18 +83,18 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   -webkit-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
-/* line 14, ../sass/components/_window.scss */
+/* line 31, ../sass/components/_window.scss */
 .window.window--resizing, .window.window--moving {
   -moz-transition: none;
   -o-transition: none;
   -webkit-transition: none;
   transition: none;
 }
-/* line 17, ../sass/components/_window.scss */
+/* line 34, ../sass/components/_window.scss */
 .window.window--active {
   z-index: 10001;
 }
-/* line 20, ../sass/components/_window.scss */
+/* line 37, ../sass/components/_window.scss */
 .window.window--maximized {
   bottom: 5px !important;
   top: auto !important;
@@ -102,7 +102,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 100vw !important;
   height: 100vh !important;
 }
-/* line 27, ../sass/components/_window.scss */
+/* line 44, ../sass/components/_window.scss */
 .window.window--minimized {
   height: 25px !important;
   width: 180px !important;
@@ -110,29 +110,29 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: auto !important;
   left: 5px !important;
 }
-/* line 33, ../sass/components/_window.scss */
+/* line 50, ../sass/components/_window.scss */
 .window.window--minimized .window-content {
   display: none;
 }
-/* line 37, ../sass/components/_window.scss */
+/* line 54, ../sass/components/_window.scss */
 .window.window--destroyed {
   opacity: 0;
   width: 0;
   height: 0;
 }
-/* line 42, ../sass/components/_window.scss */
+/* line 59, ../sass/components/_window.scss */
 .window .window-header {
   background-color: #eee;
   height: 25px;
 }
-/* line 45, ../sass/components/_window.scss */
+/* line 62, ../sass/components/_window.scss */
 .window .window-header .window-controls {
   display: flex;
   height: 100%;
   justify-content: flex-end;
   align-items: center;
 }
-/* line 50, ../sass/components/_window.scss */
+/* line 67, ../sass/components/_window.scss */
 .window .window-header .window-controls .control-item {
   width: 25px;
   height: 25px;
@@ -144,44 +144,57 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition: all 0.15s ease-in;
   cursor: pointer;
 }
-/* line 58, ../sass/components/_window.scss */
+/* line 75, ../sass/components/_window.scss */
 .window .window-header .window-controls .control-item:hover {
   background-color: #ccc;
 }
-/* line 61, ../sass/components/_window.scss */
+/* line 78, ../sass/components/_window.scss */
 .window .window-header .window-controls .control-item.control-close {
   font-size: 20px;
   font-weight: 500;
   line-height: 28px;
 }
-/* line 66, ../sass/components/_window.scss */
+/* line 83, ../sass/components/_window.scss */
 .window .window-header .window-controls .control-item.control-close:hover {
   background-color: #ec6060;
   color: #fff;
 }
-/* line 71, ../sass/components/_window.scss */
+/* line 88, ../sass/components/_window.scss */
 .window .window-header .window-controls .control-item.control-maximize {
   line-height: 19px;
 }
-/* line 74, ../sass/components/_window.scss */
+/* line 91, ../sass/components/_window.scss */
 .window .window-header .window-controls .control-item.control-minimize {
   line-height: 22px;
 }
-/* line 80, ../sass/components/_window.scss */
+/* line 97, ../sass/components/_window.scss */
 .window .window-content {
   overflow: auto;
   height: calc(100% - 25px);
+}
+/* line 5, ../sass/components/_window.scss */
+.window .window-content::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+/* line 10, ../sass/components/_window.scss */
+.window .window-content::-webkit-scrollbar-thumb {
+  background: #a7a7a7;
+}
+/* line 14, ../sass/components/_window.scss */
+.window .window-content::-webkit-scrollbar-track {
+  background: #eeeeee;
 }
 
 /**
  * Remove JQuery UI properties
  */
-/* line 89, ../sass/components/_window.scss */
+/* line 107, ../sass/components/_window.scss */
 .ui-resizable-handle {
   background: none;
 }
 
-/* line 9, ../sass/components/_terminal.scss */
+/* line 11, ../sass/components/_terminal.scss */
 .terminal {
   min-height: 100%;
   background: #232323;
@@ -192,34 +205,47 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-size: 14px;
   line-height: 1.5;
 }
-/* line 18, ../sass/components/_terminal.scss */
+/* line 20, ../sass/components/_terminal.scss */
+.terminal *::selection {
+  background: #FFF;
+  /* WebKit/Blink Browsers */
+  text-shadow: 0 0 0 #232323;
+}
+/* line 24, ../sass/components/_terminal.scss */
+.terminal *::-moz-selection {
+  background: #FFF;
+  /* Gecko Browsers */
+  text-shadow: 0 0 0 #232323;
+}
+/* line 28, ../sass/components/_terminal.scss */
 .terminal .prompt {
   color: transparent;
   text-shadow: 0 0 0 #FFF;
 }
-/* line 21, ../sass/components/_terminal.scss */
+/* line 31, ../sass/components/_terminal.scss */
 .terminal .prompt.error {
   text-shadow: 0 0 0 #D24D57;
 }
-/* line 24, ../sass/components/_terminal.scss */
+/* line 34, ../sass/components/_terminal.scss */
 .terminal .prompt pre {
   margin: 0;
 }
-/* line 27, ../sass/components/_terminal.scss */
+/* line 37, ../sass/components/_terminal.scss */
 .terminal .prompt .pulse {
   -moz-animation: pulse 1s ease-in-out infinite;
   -webkit-animation: pulse 1s ease-in-out infinite;
   animation: pulse 1s ease-in-out infinite;
   text-shadow: 0 0 0 #32c146;
 }
-/* line 31, ../sass/components/_terminal.scss */
+/* line 41, ../sass/components/_terminal.scss */
 .terminal .prompt .command {
   text-shadow: 0 0 0 #32c146;
   outline: none;
 }
-/* line 37, ../sass/components/_terminal.scss */
+/* line 47, ../sass/components/_terminal.scss */
 .terminal .comment {
-  color: gray;
+  color: transparent;
+  text-shadow: 0 0 0 gray;
 }
 
 @-moz-keyframes pulse {
