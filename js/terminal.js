@@ -282,10 +282,19 @@
         plugin.init();
     };
     $.fn.terminal = function(options) {
+        var pluginName = 'terminal';
         return this.each(function() {    
             if ($(this).attr('upgraded') == undefined) {              
-                var plugin = new $.terminal(this, options);
-                $(this).attr('upgraded', 'true');
+                var upgraded =  $(this).attr('upgraded');
+                if (upgraded != undefined) {   
+                    if(upgraded.indexOf(pluginName + ',') == -1){
+                        var plugin = new $.terminal(this, options);
+                        $(this).attr('upgraded', upgraded + pluginName+',');
+                    } 
+                }else{
+                    var plugin = new $.terminal(this, options);
+                    $(this).attr('upgraded', pluginName+',');
+                }
             }
         });
     } 
