@@ -64,6 +64,12 @@
                         plugin.createErrorLine(text).insertBefore(plugin.prompt);
                         plugin.promptBottom();
                     },
+                    clear : function(text){
+                        plugin.clear();
+                    },
+                    clearLastLine : function(text){
+                        plugin.clearLastLine();
+                    },
                     in : function(callback){
                         plugin.showPrompt(false);
                         plugin.deinitPromptHandlers();
@@ -106,7 +112,8 @@
             delete options.prog;
         }      
         plugin.options = $.extend({
-           prog : prog
+           prog : prog,
+           prompt : "$",
         }, options);        
         plugin.init = function() {
              plugin.initPrompt();
@@ -118,7 +125,7 @@
         plugin.initPrompt = function(){
             plugin.terminal = $(
                                 '<div class="terminal">'+
-                                    '<div class="comment"><pre># use \'help\' to see available command</pre></div>'+
+                                    '<div class="comment"><pre># use \'help\' to see available commands</pre></div>'+
                                 '</div>'
                             ),
             $el.append(plugin.terminal);
@@ -130,7 +137,7 @@
             plugin.initPromptHandlers();
         }
         plugin.createPrompt = function(){
-            return $('<div class="prompt input"><pre><span class="dollar">$ </span><span contenteditable="true" class="command"></span><span class="pulse">_</span></pre></div>') ;
+            return $('<div class="prompt line"><pre><span class="dollar">'+plugin.options.prompt+' </span><span contenteditable="true" class="command"></span><span class="pulse">_</span></pre></div>') ;
         }
         plugin.initPromptHandlers = function(){
             var newPrompt = plugin.createPrompt();
@@ -154,7 +161,7 @@
             if (e.keyCode == 76 && e.ctrlKey) {
                 e.preventDefault();
                 if(plugin.autoexit){
-                    $el.find('.prompt').not('.input').remove();
+                    plugin.clear();
                     plugin.focusPrompt();
                 }
             }
@@ -223,20 +230,26 @@
                 $($el).scrollTop($el[0].scrollHeight);
             }, 1 );
         }
+        plugin.clear = function(){
+            $el.find('.line').not('.prompt').remove();
+        }
+        plugin.clearLastLine = function(){
+            $el.find('.line').not('.prompt').not('.command').last().remove();
+        }
         /*
          * Creation of line
          */
         plugin.createLine = function(content, color){
             if(color){
-                return $('<div class="prompt" style="text-shadow: 0 0 0 '+color+ '"><pre>'+content+'</pre></div>');
+                return $('<div class="line" style="text-shadow: 0 0 0 '+color+ '"><pre>'+content+'</pre></div>');
             }
-            return $('<div class="prompt"><pre>'+content+'</pre></div>');
+            return $('<div class="line"><pre>'+content+'</pre></div>');
         }
         plugin.createCommandLine = function(command){
-            return $('<div class="prompt"><pre><span class="dollar">$ </span><span class="command">'+command+'</span></pre></div>');
+            return $('<div class="line command"><pre><span class="dollar">'+plugin.options.prompt+' </span><span class="command">'+command+'</span></pre></div>');
         }
         plugin.createErrorLine = function(content){
-            return $('<div class="prompt error"><pre>'+content+'</pre></div>');
+            return $('<div class="line error"><pre>'+content+'</pre></div>');
         }
         /*
          * Execution

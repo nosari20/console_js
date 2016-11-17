@@ -50,7 +50,6 @@
                 $(this).addClass("window--active");
             });            
             $el.not(".window--maximized").not(".window--minimize").resizable({
-                alsoResize: ".window--active .window-content",
                 minWidth: 450,
                 minHeight: 250,
                 resizestart : plugin.startResizing,

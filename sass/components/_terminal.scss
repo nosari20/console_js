@@ -25,7 +25,7 @@ $default-color: #FFF;
         background: $default-color; /* Gecko Browsers */
         text-shadow: 0 0 0 $background-color;
     }
-    .prompt{
+    .line{
         color: transparent; //hide the caret
         text-shadow: 0 0 0 $default-color;
         &.error{

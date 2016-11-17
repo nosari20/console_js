@@ -226,27 +226,27 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   text-shadow: 0 0 0 #232323;
 }
 /* line 28, ../sass/components/_terminal.scss */
-.terminal .prompt {
+.terminal .line {
   color: transparent;
   text-shadow: 0 0 0 #FFF;
 }
 /* line 31, ../sass/components/_terminal.scss */
-.terminal .prompt.error {
+.terminal .line.error {
   text-shadow: 0 0 0 #D24D57;
 }
 /* line 34, ../sass/components/_terminal.scss */
-.terminal .prompt pre {
+.terminal .line pre {
   margin: 0;
 }
 /* line 37, ../sass/components/_terminal.scss */
-.terminal .prompt .pulse {
+.terminal .line .pulse {
   -moz-animation: pulse 1s ease-in-out infinite;
   -webkit-animation: pulse 1s ease-in-out infinite;
   animation: pulse 1s ease-in-out infinite;
   text-shadow: 0 0 0 #32c146;
 }
 /* line 41, ../sass/components/_terminal.scss */
-.terminal .prompt .command {
+.terminal .line .command {
   text-shadow: 0 0 0 #32c146;
   outline: none;
 }
