@@ -101,7 +101,13 @@
                     wait : function(){
                         plugin.autoexit = false;
                         plugin.getPromptInput().keydown(plugin.promptCTRL_C);
-                    }
+                    },
+                    changeDir : function(dir){
+                        plugin.options.promptDir = dir;
+                    },
+                    changeUser : function(usr){
+                        plugin.options.promptUser = usr;
+                    },
         }
 
         /*
@@ -137,7 +143,22 @@
             plugin.initPromptHandlers();
         }
         plugin.createPrompt = function(){
-            return $('<div class="prompt line"><pre><span class="dollar">'+plugin.options.prompt+' </span><span contenteditable="true" class="command"></span><span class="pulse">_</span></pre></div>') ;
+            var prefix = '';
+            if(plugin.options.promptUser){
+                var user = plugin.options.promptUser;
+                prefix = user;
+            }
+            if(plugin.options.promptDir){
+                var dir = plugin.options.promptDir;
+                if(plugin.options.promptUser){
+                    prefix = user+'@'+dir;
+                }else{
+                    prefix = dir;
+                }
+                
+            }
+
+            return $('<div class="prompt line"><pre><span class="dollar">'+prefix+plugin.options.prompt+' </span><span contenteditable="true" class="command"></span><span class="pulse">_</span></pre></div>') ;
         }
         plugin.initPromptHandlers = function(){
             var newPrompt = plugin.createPrompt();
@@ -246,7 +267,21 @@
             return $('<div class="line"><pre>'+content+'</pre></div>');
         }
         plugin.createCommandLine = function(command){
-            return $('<div class="line command"><pre><span class="dollar">'+plugin.options.prompt+' </span><span class="command">'+command+'</span></pre></div>');
+            var prefix = '';
+            if(plugin.options.promptUser){
+                var user = plugin.options.promptUser;
+                prefix = user;
+            }
+            if(plugin.options.promptDir){
+                var dir = plugin.options.promptDir;
+                if(plugin.options.promptUser){
+                    prefix = user+'@'+dir;
+                }else{
+                    prefix = dir;
+                }
+                
+            }
+            return $('<div class="line command"><pre><span class="dollar">'+prefix+plugin.options.prompt+' </span><span class="command">'+command+'</span></pre></div>');
         }
         plugin.createErrorLine = function(content){
             return $('<div class="line error"><pre>'+content+'</pre></div>');
@@ -295,19 +330,10 @@
         plugin.init();
     };
     $.fn.terminal = function(options) {
-        var pluginName = 'terminal';
         return this.each(function() {    
             if ($(this).attr('upgraded') == undefined) {              
-                var upgraded =  $(this).attr('upgraded');
-                if (upgraded != undefined) {   
-                    if(upgraded.indexOf(pluginName + ',') == -1){
-                        var plugin = new $.terminal(this, options);
-                        $(this).attr('upgraded', upgraded + pluginName+',');
-                    } 
-                }else{
-                    var plugin = new $.terminal(this, options);
-                    $(this).attr('upgraded', pluginName+',');
-                }
+                var plugin = new $.terminal(this, options);
+                $(this).attr('upgraded', 'true');
             }
         });
     } 
